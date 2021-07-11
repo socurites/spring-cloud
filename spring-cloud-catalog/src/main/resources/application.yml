@@ -2,16 +2,15 @@ server:
   port: 0   # random port
 spring:
   application:
-    name: user-service
-  h2:
-    console:
-      enabled: true
-#      settings:
-#        web-allow-others: true
+    name: catalog-service
   datasource:
-    url: jdbc:h2:mem:testdb   # needed after boot-2.5 /w data-jpa dependency
+#    url: jdbc:h2:tcp://localhost:9090/mem:testdb
+    url: jdbc:h2:mem:testdb
   jpa:
     show-sql: true
+#    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
 eureka:
   instance:
     instance-id: '${spring.application.name}:${spring.application.instance_id:${random.value}}'

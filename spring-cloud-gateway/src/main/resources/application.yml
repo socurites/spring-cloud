@@ -28,6 +28,17 @@ spring:
                 baseMessage: Inner Logging Filter
                 preLogger: true
                 postLogger: true
+        - id: catalog-service
+          uri: lb://CATALOG-SERVICE
+          predicates:
+            - Path=/catalogs/**
+          filters:
+            - name: CustomFilter
+            - name: LoggingFilter
+              args:
+                baseMessage: Inner Logging Filter
+                preLogger: true
+                postLogger: true
       default-filters:
         - name: GlobalFilter
           args:
