@@ -1,0 +1,5 @@
+gateway:
+  ip: 192.168.0.10
+token:
+  expiration-time: 1800
+  secret: any-token-secret
