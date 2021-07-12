@@ -8,3 +8,4 @@ spring:
       server:
         git:
           uri: file:///Users/junyisong/Wokrkspace/Java/spring-cloud/configuration
+          
