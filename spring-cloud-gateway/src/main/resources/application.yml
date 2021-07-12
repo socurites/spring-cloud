@@ -14,24 +14,60 @@ spring:
   cloud:
     gateway:
       routes:
+#        - id: user-service
+##          uri: http://localhost:61442/
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/users/**
+#          filters:
+##            - AddRequestHeader=req-header-key,req-header-value
+##            - AddResponseHeader=res-header-key,res-header-value
+#            - name: CustomFilter
+#            - name: LoggingFilter
+#              args:
+#                baseMessage: Inner Logging Filter
+#                preLogger: true
+#                postLogger: true
         - id: user-service
-#          uri: http://localhost:61442/
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/users/**
+            - Path=/user-service/login
+            - Method=POST
           filters:
-#            - AddRequestHeader=req-header-key,req-header-value
-#            - AddResponseHeader=res-header-key,res-header-value
+            - RemoveRequestHeader=Cookie    # tells the gateway to remove the users “Cookie” header from the request during the routing operation (because downstream services don’t need this, all they need is the JWT access_token)
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/users
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/**
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+        - id: catalog-service
+          uri: lb://CATALOG-SERVICE
+          predicates:
+            - Path=/catalogs/**
+          filters:
             - name: CustomFilter
             - name: LoggingFilter
               args:
                 baseMessage: Inner Logging Filter
                 preLogger: true
                 postLogger: true
-        - id: catalog-service
-          uri: lb://CATALOG-SERVICE
+        - id: order-service
+          uri: lb://ORDER-SERVICE
           predicates:
-            - Path=/catalogs/**
+            - Path=/orders/**
           filters:
             - name: CustomFilter
             - name: LoggingFilter
@@ -45,3 +81,5 @@ spring:
             baseMessage: Spring Cloud Gateway Global Filter
             preLogger: true
             postLogger: true
+token:
+  secret: any-token-secret
