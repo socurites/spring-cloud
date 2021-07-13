@@ -12,6 +12,11 @@ spring:
     url: jdbc:h2:mem:testdb   # needed after boot-2.5 /w data-jpa dependency
   jpa:
     show-sql: true
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
 eureka:
   instance:
     instance-id: '${spring.application.name}:${spring.application.instance_id:${random.value}}'
@@ -33,3 +38,4 @@ management:
           - refresh
           - health
           - beans
+          - busrefresh
