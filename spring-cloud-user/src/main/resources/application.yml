@@ -20,8 +20,16 @@ eureka:
     fetch-registry: true
     service-url:
       deefaultZone: http://127.0.0.1:8761/eureka
-token:
-  expiration-time: 1800
-  secret: any-token-secret
+#token:
+#  expiration-time: 1800
+#  secret: any-token-secret
 greeting:
   message: Welcom to the spring-cloud user-service
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - refresh
+          - health
+          - beans

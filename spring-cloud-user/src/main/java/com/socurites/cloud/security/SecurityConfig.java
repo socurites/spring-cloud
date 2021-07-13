@@ -32,12 +32,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.csrf().disable()
-      .authorizeRequests()
+    http.csrf().disable();
+
+    http.authorizeRequests()
+      .antMatchers("/actuator/**")
+        .permitAll();
+
+    http.authorizeRequests()
         .antMatchers("/**")
-        .hasIpAddress("192.168.0.10")   // API G/W IP
-      .and()
-        .addFilter(getAuthenticationFilter());
+          .hasIpAddress("192.168.0.10")   // API G/W IP
+          .and()
+          .addFilter(getAuthenticationFilter());
 
   }
 
