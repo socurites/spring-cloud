@@ -37,3 +37,7 @@ management:
           - health
           - beans
           - busrefresh
+logging:
+  level:
+    root: info
+    com.socurites.cloud.client.: debug

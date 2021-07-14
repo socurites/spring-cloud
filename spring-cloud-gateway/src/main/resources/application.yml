@@ -64,11 +64,17 @@ spring:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
+            - name: LoggingFilter
+              args:
+                baseMessage: Inner Logging Filter
+                preLogger: true
+                postLogger: true
         - id: catalog-service
           uri: lb://CATALOG-SERVICE
           predicates:
-            - Path=/catalogs/**
+            - Path=/catalog-service/catalogs/**
           filters:
+            - RewritePath=/catalog-service/(?<segment>.*), /$\{segment}
             - name: CustomFilter
             - name: LoggingFilter
               args:
@@ -78,8 +84,9 @@ spring:
         - id: order-service
           uri: lb://ORDER-SERVICE
           predicates:
-            - Path=/orders/**
+            - Path=/order-service/orders/**
           filters:
+            - RewritePath=/order-service/(?<segment>.*), /$\{segment}
             - name: CustomFilter
             - name: LoggingFilter
               args:

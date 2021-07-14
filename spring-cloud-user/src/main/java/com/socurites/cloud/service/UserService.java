@@ -2,7 +2,12 @@ package com.socurites.cloud.service;
 
 import com.socurites.cloud.domain.user.User;
 import com.socurites.cloud.domain.user.UserRepository;
+import com.socurites.cloud.client.OrderServiceClient;
+import com.socurites.cloud.web.dto.OrderResponseDto;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,17 +17,22 @@ import org.springframework.transaction.annotation.Transactional;
 import com.socurites.cloud.web.dto.UserOrderResponseDto;
 import com.socurites.cloud.web.dto.UserResponseDto;
 import com.socurites.cloud.web.dto.UserSaveRequestDto;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  private final Environment environment;
+  private final RestTemplate restTemplate;
+  private final OrderServiceClient orderServiceClient;
 
   @Transactional
   public UserResponseDto save(UserSaveRequestDto requestDto) {
@@ -36,9 +46,37 @@ public class UserService implements UserDetailsService {
       .orElseThrow(() ->
         new IllegalArgumentException(String.format("No user for userId: %s", userId)));
 
-    // TODO: set orders
+    // using restTemplate + properties
+//    String orderUrl = String.format("http://%s:%s",
+//      environment.getProperty("gateway.ip"), environment.getProperty("gateway.port")) +
+//      String.format(environment.getProperty("service.order-service.uri.get-orders"), userId);
 
-    return new UserOrderResponseDto(user);
+    // using restTemplate + eureka
+//    String orderUrl = String.format("http://ORDER-SERVICE") +
+//      String.format(environment.getProperty("service.order-service.uri.get-orders"), userId);
+//    log.info(String.format("Rest call to %s", orderUrl));
+//    ResponseEntity<List<OrderResponseDto>> orderListResponse = restTemplate.exchange(orderUrl, HttpMethod.GET, null,
+//      new ParameterizedTypeReference<>() {});
+//    UserOrderResponseDto userOrderResponseDto = new UserOrderResponseDto(user);
+//    userOrderResponseDto.addOrders(orderListResponse.getBody());
+
+    // FeignClient: Before ErrorDecoder
+//    List<OrderResponseDto> orderList = null;
+//    try {
+//      orderList = orderServiceClient.findFalseByUserId(userId);
+//    } catch (FeignException e) {
+//      log.error(e.getMessage());
+//    }
+
+    // FeignClient: With ErrorDecoder
+//    List<OrderResponseDto> orderList = orderServiceClient.findFalseByUserId(userId);
+
+    List<OrderResponseDto> orderList = orderServiceClient.findByUserId(userId);
+
+    UserOrderResponseDto userOrderResponseDto = new UserOrderResponseDto(user);
+    userOrderResponseDto.addOrders(orderList);
+
+    return userOrderResponseDto;
   }
 
   @Transactional(readOnly = true)
