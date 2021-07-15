@@ -7,6 +7,8 @@ import com.socurites.cloud.web.dto.OrderResponseDto;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -33,6 +35,7 @@ public class UserService implements UserDetailsService {
   private final Environment environment;
   private final RestTemplate restTemplate;
   private final OrderServiceClient orderServiceClient;
+  private final CircuitBreakerFactory circuitBreakerFactory;
 
   @Transactional
   public UserResponseDto save(UserSaveRequestDto requestDto) {
@@ -71,7 +74,11 @@ public class UserService implements UserDetailsService {
     // FeignClient: With ErrorDecoder
 //    List<OrderResponseDto> orderList = orderServiceClient.findFalseByUserId(userId);
 
-    List<OrderResponseDto> orderList = orderServiceClient.findByUserId(userId);
+    // FeignClient + CircuittBreaker
+    CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitBreaker");
+    List<OrderResponseDto> orderList = circuitBreaker.run(
+      () -> orderServiceClient.findByUserId(userId),
+      throwable -> new ArrayList<>());
 
     UserOrderResponseDto userOrderResponseDto = new UserOrderResponseDto(user);
     userOrderResponseDto.addOrders(orderList);
