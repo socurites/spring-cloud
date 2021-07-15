@@ -28,7 +28,9 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'org.springframework.kafka:spring-kafka'
 
-    implementation 'com.h2database:h2'
+//    implementation 'com.h2database:h2'
+    implementation 'org.mariadb.jdbc:mariadb-java-client'
+
     // Java 8 date/time type `java.time.LocalDateTime` not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
