@@ -111,3 +111,6 @@ management:
           - beans
           - httptrace
 #          - busrefresh
+          - info
+          - metrics
+          - prometheus

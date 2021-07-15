@@ -1,5 +1,6 @@
 package com.socurites.cloud.web;
 
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
@@ -37,6 +38,7 @@ public class UserController {
   ////////////////////////////////////////////////////////////////////////////
 
   @GetMapping("/users/health-check")
+  @Timed(value="users.status", longTask = true)
   public String status() {
     return String.format("It's working in user-service on port(local.server.port): %s\n"
       + "port(server.port): %s\n"
@@ -49,6 +51,7 @@ public class UserController {
   }
 
   @GetMapping("/users/welcome")
+  @Timed(value="users.welcome", longTask = true)
   public String welcome() {
     return environment.getProperty("greeting.message");
   }
