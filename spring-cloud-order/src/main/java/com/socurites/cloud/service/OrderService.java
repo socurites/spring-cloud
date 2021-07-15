@@ -2,6 +2,7 @@ package com.socurites.cloud.service;
 
 import com.socurites.cloud.domain.order.Order;
 import com.socurites.cloud.domain.order.OrderRepository;
+import com.socurites.cloud.message.OrderKafkaProducer;
 import com.socurites.cloud.web.dto.OrderResponseDto;
 import com.socurites.cloud.web.dto.OrderSaveRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +16,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderService {
   private final OrderRepository orderRepository;
+  private final OrderKafkaProducer orderProudcer;
 
   @Transactional
   public OrderResponseDto save(OrderSaveRequestDto requestDto) {
     Order saved = orderRepository.save(requestDto.toEntity());
-    return new OrderResponseDto(saved);
+    OrderResponseDto orderResponseDto = new OrderResponseDto(saved);
+    orderProudcer.produce(orderResponseDto);
+    return orderResponseDto;
   }
 
   @Transactional(readOnly = true)

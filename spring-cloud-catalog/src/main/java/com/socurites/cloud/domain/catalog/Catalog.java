@@ -25,4 +25,8 @@ public class Catalog extends BaseEntity {
 
   @Column(nullable = false)
   private Integer unitPrice;
+
+  public void sell(Integer qty) {
+    stock -= qty;
+  }
 }

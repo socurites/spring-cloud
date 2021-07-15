@@ -11,6 +11,29 @@ spring:
 #    generate-ddl: true
     hibernate:
       ddl-auto: create-drop
+  kafka:
+    properties:
+      bootstrap:
+        servers: pkc-4v1gp.ap-northeast-1.aws.confluent.cloud:9092
+      security:
+        protocol: SASL_SSL
+      sasl:
+        mechanism: PLAIN
+        jaas:
+          config: "org.apache.kafka.common.security.plain.PlainLoginModule   required username='GA7AM2HHI2O42L2Q'   password='5i0exPKhSM+RdjIzz5QLynRdwYu0cHuhDpAK/t+vnST6dCZLjENvGM7iGCfAskc2';"
+#    producer:
+#      client-id: test-order-producer
+#      retries: 0
+#      acks: all
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#    #      batch-size:
+    consumer:
+      group-id: test-order-consumer-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+      enable-auto-commit: true
 eureka:
   instance:
     instance-id: '${spring.application.name}:${spring.application.instance_id:${random.value}}'
@@ -21,3 +44,6 @@ eureka:
       deefaultZone: http://127.0.0.1:8761/eureka
 greeting:
   message: Welcom to the spring-cloud user-service
+app:
+  kafka:
+    topic: test-order.topic

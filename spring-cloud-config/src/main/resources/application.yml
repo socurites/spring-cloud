@@ -25,4 +25,4 @@ management:
       exposure:
         include:
           - health
-          - busrefresh
+#          - busrefresh
