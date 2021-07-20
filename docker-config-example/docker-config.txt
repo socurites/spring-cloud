@@ -1,0 +1,50 @@
+# create bridge network
+junyisong@this ~ % docker network ls
+NETWORK ID     NAME      DRIVER    SCOPE
+c6b2680cefd1   bridge    bridge    local
+ca10a3c38721   host      host      local
+869f545db483   none      null      local
+
+junyisong@this ~ % docker network create --gateway 172.10.0.1 --subnet 172.10.0.0/16 sample-network
+d249f432d7264dd9a154928d5038b59161d4894891e0e174ff7e9504a3278fc2
+
+junyisong@this ~ % docker network ls
+NETWORK ID     NAME             DRIVER    SCOPE
+c6b2680cefd1   bridge           bridge    local
+ca10a3c38721   host             host      local
+869f545db483   none             null      local
+d249f432d726   sample-network   bridge    local
+
+junyisong@this ~ % docker network inspect sample-network
+[
+    {
+        "Name": "sample-network",
+        "Id": "d249f432d7264dd9a154928d5038b59161d4894891e0e174ff7e9504a3278fc2",
+        "Created": "2021-07-16T01:20:22.234379364Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.10.0.0/16",
+                    "Gateway": "172.10.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {},
+        "Options": {},
+        "Labels": {}
+    }
+]
+
+

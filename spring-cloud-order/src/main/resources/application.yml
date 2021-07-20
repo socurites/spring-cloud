@@ -65,3 +65,18 @@ management:
 app:
   kafka:
     topic: test-order.topic
+---
+spring:
+  config:
+    activate:
+      on-profile: local-docker
+  datasource:
+    url: jdbc:mariadb://mariadb:3306/mydb
+    username: root
+    driver-class-name: org.mariadb.jdbc.Driver
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://discovery-service:8761/eureka

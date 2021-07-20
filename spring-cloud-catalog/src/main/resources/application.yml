@@ -47,3 +47,14 @@ greeting:
 app:
   kafka:
     topic: test-order.topic
+---
+spring:
+  config:
+    activate:
+      on-profile: local-docker
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://discovery-service:8761/eureka

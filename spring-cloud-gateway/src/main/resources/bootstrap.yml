@@ -6,3 +6,12 @@ spring:
 #      name: ecommerce
 #  profiles:
 #    active: dev
+---
+spring:
+  config:
+    activate:
+      on-profile: local-docker
+  cloud:
+    config:
+      uri: http://config-service:8888
+      name: config-service

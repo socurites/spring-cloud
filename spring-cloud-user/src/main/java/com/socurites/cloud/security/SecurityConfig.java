@@ -2,6 +2,8 @@ package com.socurites.cloud.security;
 
 import com.socurites.cloud.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -11,6 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.annotation.PostConstruct;
+
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -18,6 +23,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private static final String USERNAME_PARAMETER = "email";
   private static final String PASSWORD_PARAMETER = "password";
 
+  @Value("${gateway.ip}")
+  private String gatewayIp;
   private final UserService userService;
   private final PasswordEncoder passwordEncoder;
   private final Environment environment;
@@ -30,6 +37,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //          .permitAll();
 //  }
 
+  @PostConstruct
+  public void init() {
+    log.info("Gateway IP: " + gatewayIp);
+  }
+
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.csrf().disable();
@@ -40,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     http.authorizeRequests()
         .antMatchers("/**")
-          .hasIpAddress("192.168.0.10")   // API G/W IP
+          .hasIpAddress(gatewayIp)   // API G/W IP
           .and()
           .addFilter(getAuthenticationFilter());
 
